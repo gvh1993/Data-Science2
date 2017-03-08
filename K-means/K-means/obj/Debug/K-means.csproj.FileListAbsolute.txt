@@ -1,0 +1,7 @@
+c:\users\gertj\OneDrive\Documenten\Visual Studio 2015\Projects\K-means\K-means\bin\Debug\K-means.exe.config
+c:\users\gertj\OneDrive\Documenten\Visual Studio 2015\Projects\K-means\K-means\bin\Debug\K-means.exe
+c:\users\gertj\OneDrive\Documenten\Visual Studio 2015\Projects\K-means\K-means\bin\Debug\K-means.pdb
+c:\users\gertj\OneDrive\Documenten\Visual Studio 2015\Projects\K-means\K-means\obj\Debug\K-means.exe
+c:\users\gertj\OneDrive\Documenten\Visual Studio 2015\Projects\K-means\K-means\obj\Debug\K-means.pdb
+c:\users\gertj\OneDrive\Documenten\Visual Studio 2015\Projects\K-means\K-means\bin\Debug\DocumentFormat.OpenXml.dll
+c:\users\gertj\OneDrive\Documenten\Visual Studio 2015\Projects\K-means\K-means\obj\Debug\K-means.csprojResolveAssemblyReference.cache
