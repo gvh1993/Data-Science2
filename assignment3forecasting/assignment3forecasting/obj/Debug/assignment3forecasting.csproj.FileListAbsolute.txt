@@ -1,0 +1,9 @@
+C:\Users\Gert-jan\Documents\Visual Studio 2015\Projects\assignment3forecasting\assignment3forecasting\bin\Debug\assignment3forecasting.exe.config
+C:\Users\Gert-jan\Documents\Visual Studio 2015\Projects\assignment3forecasting\assignment3forecasting\obj\Debug\assignment3forecasting.csprojResolveAssemblyReference.cache
+C:\Users\Gert-jan\Documents\Visual Studio 2015\Projects\assignment3forecasting\assignment3forecasting\obj\Debug\assignment3forecasting.Form1.resources
+C:\Users\Gert-jan\Documents\Visual Studio 2015\Projects\assignment3forecasting\assignment3forecasting\obj\Debug\assignment3forecasting.Properties.Resources.resources
+C:\Users\Gert-jan\Documents\Visual Studio 2015\Projects\assignment3forecasting\assignment3forecasting\obj\Debug\assignment3forecasting.csproj.GenerateResource.Cache
+C:\Users\Gert-jan\Documents\Visual Studio 2015\Projects\assignment3forecasting\assignment3forecasting\bin\Debug\assignment3forecasting.exe
+C:\Users\Gert-jan\Documents\Visual Studio 2015\Projects\assignment3forecasting\assignment3forecasting\bin\Debug\assignment3forecasting.pdb
+C:\Users\Gert-jan\Documents\Visual Studio 2015\Projects\assignment3forecasting\assignment3forecasting\obj\Debug\assignment3forecasting.exe
+C:\Users\Gert-jan\Documents\Visual Studio 2015\Projects\assignment3forecasting\assignment3forecasting\obj\Debug\assignment3forecasting.pdb
