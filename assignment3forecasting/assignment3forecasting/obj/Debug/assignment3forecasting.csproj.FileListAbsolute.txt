@@ -7,3 +7,12 @@ C:\Users\Gert-jan\Documents\Visual Studio 2015\Projects\assignment3forecasting\a
 C:\Users\Gert-jan\Documents\Visual Studio 2015\Projects\assignment3forecasting\assignment3forecasting\bin\Debug\assignment3forecasting.pdb
 C:\Users\Gert-jan\Documents\Visual Studio 2015\Projects\assignment3forecasting\assignment3forecasting\obj\Debug\assignment3forecasting.exe
 C:\Users\Gert-jan\Documents\Visual Studio 2015\Projects\assignment3forecasting\assignment3forecasting\obj\Debug\assignment3forecasting.pdb
+D:\Github\Data science\assignment3forecasting\assignment3forecasting\bin\Debug\assignment3forecasting.exe.config
+D:\Github\Data science\assignment3forecasting\assignment3forecasting\bin\Debug\assignment3forecasting.exe
+D:\Github\Data science\assignment3forecasting\assignment3forecasting\bin\Debug\assignment3forecasting.pdb
+D:\Github\Data science\assignment3forecasting\assignment3forecasting\obj\Debug\assignment3forecasting.csprojResolveAssemblyReference.cache
+D:\Github\Data science\assignment3forecasting\assignment3forecasting\obj\Debug\assignment3forecasting.Form1.resources
+D:\Github\Data science\assignment3forecasting\assignment3forecasting\obj\Debug\assignment3forecasting.Properties.Resources.resources
+D:\Github\Data science\assignment3forecasting\assignment3forecasting\obj\Debug\assignment3forecasting.csproj.GenerateResource.Cache
+D:\Github\Data science\assignment3forecasting\assignment3forecasting\obj\Debug\assignment3forecasting.exe
+D:\Github\Data science\assignment3forecasting\assignment3forecasting\obj\Debug\assignment3forecasting.pdb

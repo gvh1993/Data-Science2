@@ -60,7 +60,7 @@ namespace assignment3forecasting
             error = error / Demand.Count - 1;
 
             error = Math.Sqrt(error);
-            if (error < this.error)
+            if (error < this.error && alpha < 1 && beta < 1)
             {
                 this.error = error;
                 alpha += 0.1f;
