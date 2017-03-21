@@ -10,8 +10,11 @@ namespace assignment3forecasting
     {
         public float beta = 0.1f;
 
-        public DES()
+        public DES(float alpha, float beta)
         {
+            this.alpha = alpha;
+            this.beta = beta;
+
             SmoothenedData = new List<int>();
             InitData();
             ComputeDES();
@@ -30,16 +33,16 @@ namespace assignment3forecasting
 
             SmoothenedData.Add(s[0] + b[0]);
 
-            for (int i = 3; i < Demand.Count; i++)
+            for (int i = 2; i < Demand.Count; i++)
             {
-                s.Add(Convert.ToInt32(alpha * Demand[i] + (1 - alpha) * (s[i - 3] + b[i - 3])));
-                b.Add(Convert.ToInt32(beta * (s[i - 2] - s[i - 3]) + (1 - beta) * b[i - 3]));
+                s.Add(Convert.ToInt32(alpha * Demand[i] + (1 - alpha) * (s[i - 2] + b[i - 2])));
+                b.Add(Convert.ToInt32(beta * (s[i - 1] - s[i - 2]) + (1 - beta) * b[i - 2]));
 
                 SmoothenedData.Add(s[i - 2] + b[i - 2]);
             }
 
             //forecast
-            for (int i = Demand.Count + 1; i < Time.Count; i++)
+            for (int i = Demand.Count; i < Time.Count; i++)
             {
                 SmoothenedData.Add(s.Last() + (i - Demand.Count) * b.Last());
             }
@@ -47,32 +50,34 @@ namespace assignment3forecasting
             CalculateError();
         }
 
-        private void CalculateError()
-        {
-            double error = 0;
+        //private void CalculateError()
+        //{
+        //    double error = 0;
 
-            for (int i = 0; i < Demand.Count; i++)
-            {
-                error += Demand[i] - SmoothenedData[i];
-            }
+        //    for (int i = 0; i < Demand.Count; i++)
+        //    {
+        //        error += Demand[i] - SmoothenedData[i];
+        //    }
 
-            error = Math.Pow(error, 2);
-            error = error / Demand.Count - 1;
+        //    error = Math.Pow(error, 2);
+        //    error = error / Demand.Count - 1;
 
-            error = Math.Sqrt(error);
-            if (error < this.error && alpha < 1 && beta < 1)
-            {
-                this.error = error;
-                alpha += 0.1f;
-                beta += 0.1f;
-                Reset();
-            }
-        }
+        //    error = Math.Sqrt(error);
 
-        private void Reset()
-        {
-            SmoothenedData.Clear();
-            ComputeDES();
-        }
+        //    this.error = error;
+        //    //if (error < this.error && alpha < 1 && beta < 1)
+        //    //{
+        //    //    this.error = error;
+        //    //    alpha += 0.1f;
+        //    //    beta += 0.1f;
+        //    //    Reset();
+        //    //}
+        //}
+
+        //private void Reset()
+        //{
+        //    SmoothenedData.Clear();
+        //    ComputeDES();
+        //}
     }
 }

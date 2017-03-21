@@ -12,13 +12,39 @@ namespace assignment3forecasting
 
         public SES ses;
         public DES des;
+
+        List<SES> SESHistory;
+        List<DES> DESHistory;
         public Form1()
         {
+            SESHistory = new List<SES>();
+            DESHistory = new List<DES>();
 
             InitializeComponent();
             InitData();
-            ses = new SES();
-            des = new DES();
+            
+
+            for (int i = 1; i < 11; i++)
+            {
+                float alphaValue = i / 10f;
+
+                SES ses = new SES(alphaValue);
+                SESHistory.Add(ses);
+
+
+                for (int j = 0; j < 11; j++)
+                {
+                    float betaValue = j / 10f;
+
+                    DES des = new DES(alphaValue, betaValue);
+                    DESHistory.Add(des);
+                }
+            }
+            double sesMin = SESHistory.Min(x => x.error);
+            ses = SESHistory.Find(x => x.error == sesMin);
+
+            double desMin = DESHistory.Min(x => x.error);
+            des = DESHistory.Find(x => x.error == desMin);
 
             PlotData();
             PlotSESData();
@@ -30,7 +56,6 @@ namespace assignment3forecasting
             lbl_DES_alpha.Text += des.alpha.ToString();
             lbl_DES_beta.Text += des.beta.ToString();
             lbl_DES_error.Text += des.error.ToString();
-
         }
 
         private void InitData()
@@ -66,9 +91,9 @@ namespace assignment3forecasting
 
         private void PlotDESData()
         {
-            for (int i = 2; i < des.SmoothenedData.Count; i++)
+            for (int i = 0; i < des.SmoothenedData.Count; i++)
             {
-                chart1.Series["DES"].Points.AddXY(i, des.SmoothenedData[i - 2]);
+                chart1.Series["DES"].Points.AddXY(i+2, des.SmoothenedData[i]);
             }
         }
     }

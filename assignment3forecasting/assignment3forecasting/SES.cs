@@ -8,13 +8,13 @@ namespace assignment3forecasting
 {
     public class SES : Forecast
     {
-        public SES()
+        public SES(float alpha)
         {
+            this.alpha = alpha;
             SmoothenedData = new List<int>();
 
             InitData();
             ComputeSES();
-
         }
 
         private void ComputeSES()
@@ -38,7 +38,7 @@ namespace assignment3forecasting
             }
 
             //forecast
-            for (int i = Demand.Count + 1; i < Time.Count; i++)
+            for (int i = Demand.Count; i < Time.Count; i++)
             {
                 SmoothenedData.Add(SmoothenedData.Last());
             }
@@ -46,31 +46,6 @@ namespace assignment3forecasting
             CalculateError();
         }
 
-        private void CalculateError()
-        {
-            double error = 0;
 
-            for (int i = 0; i < Demand.Count; i++)
-            {
-                error += Demand[i] - SmoothenedData[i];
-            }
-
-            error = Math.Pow(error, 2);
-            error = error / (Demand.Count - 1);
-
-            error = Math.Sqrt(error);
-            if (error < this.error && alpha < 1)
-            {
-                this.error = error;
-                alpha += 0.1f;
-                Reset();
-            }
-        }
-
-        private void Reset()
-        {
-            SmoothenedData.Clear();
-            ComputeSES();
-        }
     }
 }
