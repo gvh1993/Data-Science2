@@ -1,22 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
-namespace Genetic_algorithm
+namespace Genetic_Algorithms
 {
-    class Program
+    public partial class Form1 : Form
     {
-        static List<List<Binary>> populationHistory = new List<List<Binary>>();
+        private double crossoverRate, mutationRate;
+        private bool elitism = false;
+        private int populationSize, iterations, elitismCount;
 
-        static List<Binary> currentPopulation;
+        List<List<Binary>> populationHistory;
 
-        static List<Binary> newPopulation;
+        List<Binary> currentPopulation;
 
-        static Random r = new Random();
+        List<Binary> newPopulation;
 
-        static void Main(string[] args)
+        Random r;
+
+        public Form1()
+        {
+            populationHistory = new List<List<Binary>>();
+            currentPopulation = new List<Binary>();
+            newPopulation = new List<Binary>();
+            r = new Random();
+            elitismCount = 0;
+            InitializePopulation();
+
+            InitializeComponent();
+
+          
+        }
+
+        private void StartGeneticAlgorithm()
         {
             // In this assignment you must build a genetic algorithm and apply it to a simple problem. The simple problem is the
             // maximization of the function
@@ -26,48 +48,58 @@ namespace Genetic_algorithm
             //beginning
             //minimal binary string is: 00000 
             //maximal binary string is: 11111
-
-            //initial population
-            InitializePopulation();
+            
 
             //evaluation
             //selection
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < iterations; i++)
             {
                 populationHistory.Add(new List<Binary>());
                 newPopulation = populationHistory.Last();
                 currentPopulation = populationHistory[populationHistory.Count - 2];
+                
 
-                SelectTop();
-                for (int j = 1; j < currentPopulation.Count; j += 2)
+                //ELITISM
+                if (elitism)
                 {
-                    Tuple<Binary, Binary> parents = SelectParentsTournament();
-
-                    Tuple<Binary, Binary> children = Crossover(parents);
-
-                    newPopulation.Add(children.Item1);
-                    newPopulation.Add(children.Item2);
+                    elitismCount = 1;
+                    Elitism(elitismCount);
                 }
+                
+                //adding 2 because adding 2 children at once
+                //starting from 0 if no elitism starting from # if elitism is true
+                for (int j = elitismCount; j < currentPopulation.Count; j += 2)
+                {
+                    double crossoverDecider = r.NextDouble();
+                    Tuple<Binary, Binary> parents = SelectParentsTournament();
+                    if (crossoverDecider <= crossoverRate)
+                    {
+                        Tuple<Binary, Binary> children = Crossover(parents);
+                        newPopulation.Add(children.Item1);
+                        newPopulation.Add(children.Item2);
+                    }
+                    else
+                    {
+                        newPopulation.Add(parents.Item1);
+                        newPopulation.Add(parents.Item2);
+                    }
+                }
+                //make sure u have the populationSize with uneven numbers and elitism off and vica versa
+                newPopulation = newPopulation.GetRange(0, populationSize);
 
                 //mutation
-                Mutate(new Binary(), 0.05);
+                Mutate(new Binary(), mutationRate);
 
                 SetNewPopulationFitness();
                 //evolved population
-                //end or go to selection
-                
-                Reset();
-                
+
             }
             PrintOutput();
 
             Console.Read();
         }
-
-        static void InitializePopulation()
+        void InitializePopulation()
         {
-            currentPopulation = new List<Binary>();
-
             for (int i = 0; i < 25; i++)
             {
                 Binary individual = new Binary();
@@ -85,16 +117,16 @@ namespace Genetic_algorithm
             populationHistory.Add(currentPopulation);
         }
 
-        static double ComputeFitness(Binary bin)
+        double ComputeFitness(Binary bin)
         {
-            double fitness = -Math.Pow(bin.CalculateBinaryCode(), 2) + 7*bin.CalculateBinaryCode();
+            double fitness = -Math.Pow(bin.CalculateBinaryCode(), 2) + 7 * bin.CalculateBinaryCode();
 
             return fitness;
         }
 
-        static void SelectTop()
+        void Elitism(int elitismCount)
         {
-            List<Binary> elite = currentPopulation.OrderByDescending(x => x.Fitness).Take(1).ToList();
+            List<Binary> elite = currentPopulation.OrderByDescending(x => x.Fitness).Take(elitismCount).ToList();
 
             foreach (var eliteIndividual in elite)
             {
@@ -102,7 +134,7 @@ namespace Genetic_algorithm
             }
         }
 
-        static Tuple<Binary, Binary> SelectParentsTournament()
+        Tuple<Binary, Binary> SelectParentsTournament()
         {
             List<Binary> tournamentPlayers = new List<Binary>();
 
@@ -130,33 +162,36 @@ namespace Genetic_algorithm
             return new Tuple<Binary, Binary>(mother, father);
         }
 
-        static Tuple<Binary, Binary> Crossover(Tuple<Binary, Binary> masterRace)
+        Tuple<Binary, Binary> Crossover(Tuple<Binary, Binary> masterRace)
         {
             Binary newMother = new Binary();
             Binary newFather = new Binary();
 
             int crossoverPoint = r.Next(1, newMother.BitArray.Length);
 
-            for (int i = 0; i < newMother.BitArray.Length; i++)
-            {
-                if (i < newMother.BitArray.Length-crossoverPoint)
+
+                for (int i = 0; i < newMother.BitArray.Length; i++)
                 {
-                    newFather.BitArray[i] = masterRace.Item1.BitArray[i];
-                    newMother.BitArray[i] = masterRace.Item2.BitArray[i];
+                    if (i < newMother.BitArray.Length - crossoverPoint)
+                    {
+                        newFather.BitArray[i] = masterRace.Item1.BitArray[i];
+                        newMother.BitArray[i] = masterRace.Item2.BitArray[i];
+                    }
+                    else
+                    {
+                        newMother.BitArray[i] = masterRace.Item1.BitArray[i];
+                        newFather.BitArray[i] = masterRace.Item2.BitArray[i];
+                    }
                 }
-                else
-                {
-                    newMother.BitArray[i] = masterRace.Item1.BitArray[i];
-                    newFather.BitArray[i] = masterRace.Item2.BitArray[i];
-                }
-            }
+            
+
             newMother.Fitness = ComputeFitness(newMother);
             newFather.Fitness = ComputeFitness(newFather);
 
             return new Tuple<Binary, Binary>(newMother, newFather);
         }
 
-        static void Mutate(Binary individual, double mutationRate)
+        void Mutate(Binary individual, double mutationRate)
         {
 
             for (int i = 0; i < newPopulation.Count; i++)
@@ -179,7 +214,7 @@ namespace Genetic_algorithm
             }
         }
 
-        static void SetNewPopulationFitness()
+        void SetNewPopulationFitness()
         {
             for (int i = 0; i < newPopulation.Count; i++)
             {
@@ -187,7 +222,7 @@ namespace Genetic_algorithm
             }
         }
 
-        static void PrintOutput()
+        void PrintOutput()
         {
             double countFitness = 0;
 
@@ -200,14 +235,50 @@ namespace Genetic_algorithm
             Binary fittest = currentPopulation.OrderByDescending(x => x.Fitness).Take(1).First();
             Console.WriteLine("Fittest of last population: " + fittest.Fitness);
             Console.WriteLine("Fittest number:" + fittest.CalculateBinaryCode());
+
+            lbl_AverageFittness.Text = "Average Fittness: " + countFitness / populationHistory.Last().Count;
+            lbl_BestFittness.Text = "Best Fittness: " + fittest.Fitness;
+            lbl_BestIndividual.Text = "Best individual: " + fittest.ToString();
         }
 
-        private static void Reset()
+        private void btn_Start_Click(object sender, EventArgs e)
         {
+            if (ValidateInput())
+            {
+                StartGeneticAlgorithm();
+            }
+        }
+        private bool ValidateInput()
+        {
+            lbl_Error.Text = "Error: ";
 
-            //currentPopulation.Clear();
-            //currentPopulation = new List<Binary>(newPopulation);
-            //newPopulation.Clear();
+            if (!Double.TryParse(txt_CrossoverRate.Text, out crossoverRate) )
+            {
+                lbl_Error.Text += "Crossover, ";
+                return false;
+            }
+            if (!Double.TryParse(txt_MutationRate.Text, out mutationRate))
+            {
+                lbl_Error.Text += "Mutation, ";
+                return false;
+            }
+            if (!Int32.TryParse(txt_Iterations.Text, out iterations))
+            {
+                lbl_Error.Text += "Iterations, ";
+                return false;
+            }
+            if (!Int32.TryParse(txt_PopulationSize.Text, out populationSize))
+            {
+                lbl_Error.Text += "Population Size";
+                return false;
+            }
+            if (chbx_Elitism.Checked)
+            {
+                elitism = true;
+            }
+
+            lbl_Error.Text = "";
+            return true;
         }
     }
 }
