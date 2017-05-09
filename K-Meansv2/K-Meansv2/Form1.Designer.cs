@@ -40,6 +40,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.lbl_amountOfItemsInCluster = new System.Windows.Forms.Label();
+            this.listView3 = new System.Windows.Forms.ListView();
             this.SuspendLayout();
             // 
             // lbl_amountOfClusters
@@ -119,7 +120,7 @@
             // 
             this.listView2.Location = new System.Drawing.Point(810, 80);
             this.listView2.Name = "listView2";
-            this.listView2.Size = new System.Drawing.Size(452, 764);
+            this.listView2.Size = new System.Drawing.Size(658, 1248);
             this.listView2.TabIndex = 8;
             this.listView2.UseCompatibleStateImageBehavior = false;
             this.listView2.View = System.Windows.Forms.View.List;
@@ -151,11 +152,22 @@
             this.lbl_amountOfItemsInCluster.TabIndex = 11;
             this.lbl_amountOfItemsInCluster.Text = "Amount of Items in cluster:";
             // 
+            // listView3
+            // 
+            this.listView3.Location = new System.Drawing.Point(1536, 80);
+            this.listView3.Name = "listView3";
+            this.listView3.Size = new System.Drawing.Size(731, 1248);
+            this.listView3.TabIndex = 12;
+            this.listView3.UseCompatibleStateImageBehavior = false;
+            this.listView3.View = System.Windows.Forms.View.List;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1397, 871);
+            this.AutoSize = true;
+            this.ClientSize = new System.Drawing.Size(2372, 1400);
+            this.Controls.Add(this.listView3);
             this.Controls.Add(this.lbl_amountOfItemsInCluster);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -189,6 +201,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label lbl_amountOfItemsInCluster;
+        private System.Windows.Forms.ListView listView3;
     }
 }
 

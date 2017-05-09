@@ -242,6 +242,11 @@ namespace K_Meansv2
             return distance;
         }
 
+        private void Silhouette()
+        {
+            //TODO implement silhouette
+        }
+
         private void KMeans(int iterations)
         {
             for (int i = 0; i <= iterations; i++)
@@ -270,28 +275,62 @@ namespace K_Meansv2
                 return;
             }
 
+            
             listView2.Items.Clear();
+            listView3.Items.Clear();
             //get cluster from cluster list by getting the number
             string[] listViewItem = listView1.SelectedItems[0].Text.Split(' ');
             Cluster chosenCluster = clusters[Convert.ToInt32(listViewItem[1]) - 1];
 
             Console.WriteLine(listView1.SelectedItems[0].Text);
-            foreach (var wineDataItem in chosenCluster.WineData)
+            lbl_amountOfItemsInCluster.Text = "Amount of items in cluster: " + chosenCluster.WineData.Count;
+            List<int> amountBought = new List<int>() {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+
+            for (int i = 0; i < chosenCluster.WineData.Count; i++)
             {
-                ListViewItem item = new ListViewItem()
+                string client = "client #" + i + " buys offer: " ;
+                for (int j = 0; j < columns; j++)
                 {
-                    Text = string.Join("", wineDataItem)
-                };
+                    if (chosenCluster.WineData[i][j] == 1)
+                    {
+                        client += j + ", ";
+                        amountBought[j] += 1;
+                    }
+
+                }
+
+                ListViewItem item = new ListViewItem();
+                item.Text = client;
                 listView2.Items.Add(item);
 
             }
-            lbl_amountOfItemsInCluster.Text = "Amount of items in cluster: " + chosenCluster.WineData.Count;
+
+            for (int i = 0; i < amountBought.Count; i++)
+            {
+                ListViewItem item = new ListViewItem();
+                item.Text = $"Offer {(i + 1)} --> bought {amountBought[i]} times";
+                listView3.Items.Add(item);
+            }
+            
+
+            //foreach (var wineDataItem in chosenCluster.WineData)
+            //{
+            //    ListViewItem item = new ListViewItem()
+            //    {
+            //        Text = string.Join("", wineDataItem)
+            //    };
+            //    listView2.Items.Add(item);
+
+            //}
+            
         }
 
         private void PrintOutput()
         {
             lbl_bestSSE.Text += SSE(clusters);
             listView1.Clear();
+            listView2.Clear();
+            listView3.Clear();
 
             for (int i = 0; i < amountOfClusters; i++)
             {
