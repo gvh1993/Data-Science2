@@ -4,16 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Data_science_user_item
+namespace Data_science_user_item.SimilairtyComputation
 {
-    public abstract class SimilarityComputation
+    public abstract class FilteredSimilarityComputation
     {
-        Dictionary<int, Dictionary<int, float>> ratings;
-        public SimilarityComputation(Dictionary<int, Dictionary<int, float>> ratings)
-        {
-            this.ratings = ratings;
-        }
-
         protected Dictionary<int, Dictionary<int, float>> Filter(KeyValuePair<int, Dictionary<int, float>> person1, KeyValuePair<int, Dictionary<int, float>> person2)
         {
             // check the items in common and return it in a filtered dictionary
@@ -38,11 +32,5 @@ namespace Data_science_user_item
 
             return filteredPersons;
         }
-
-        public double CalculateSimilarity(double distance)
-        {
-            return 1 / (1 + distance);
-        }
-
     }
 }

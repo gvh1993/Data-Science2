@@ -5,62 +5,111 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Data_science_user_item.Enums;
 
 namespace Data_science_user_item
 {
     class User_Item
     {
         Dictionary<int, Dictionary<int, float>> ratings;
+        Dictionary<int, Dictionary<int, float>> testData;
 
-        public User_Item()
+        public int UserId { get; set; }
+        public int TopNeighbours { get; set; }
+        public double Threshold { get; set; }
+        public SimilarityComputations Algorithm { get; set; }
+
+        ISimilarityComputation similairtyComputationAbility;
+
+        KeyValuePair<int, Dictionary<int, float>> chosenUser;
+
+        public User_Item(Dictionary<int, Dictionary<int, float>> ratings, Dictionary<int, Dictionary<int, float>> testData, int userId, float threshold, int topNeighbours, SimilarityComputations algorithm)
         {
-            ratings = new Dictionary<int, Dictionary<int, float>>();
-            InitData();
+            this.ratings = ratings;
+            this.testData = testData;
+            UserId = userId;
+            TopNeighbours = topNeighbours;
+            Threshold = threshold;
+            Algorithm = algorithm;
+
+            chosenUser = ratings.SingleOrDefault(x => x.Key == userId);
+
+            Execute();
         }
+        
+        public void Execute() {
+            Dictionary<int, double> nearestNeighbours = new Dictionary<int, double>();
 
-        private void InitData()
-        {
-            using (FileStream fileStream = File.OpenRead("userItem.data"))
+            switch (Algorithm)
             {
-                using (StreamReader reader = new StreamReader(fileStream))
-                {
-                    while (!reader.EndOfStream)
+                case SimilarityComputations.Euclidean:
+                    similairtyComputationAbility = new Euclidean();
+                    //loop through all keys except the one inserted
+                    foreach (var otherUser in ratings)
                     {
-                        var line = reader.ReadLine().Split(',');
+                        if (otherUser.Key == UserId)
+                        {
+                            continue;
+                        }
+                        double similarity = similairtyComputationAbility.CalculateSimilarity(chosenUser, otherUser);
+                        if (similarity > Threshold) //check if its higher than threshold
+                        {
+                            if (nearestNeighbours.Count < TopNeighbours) // check if theres room in list
+                            {
+                                nearestNeighbours.Add(otherUser.Key, similarity);
+                            }
+                            else //if there is no more room --> change threshold and check if its higher than that
+                            {
+                                Threshold = nearestNeighbours.Select(x => x.Value).Min();
+                                if (similarity > Threshold)
+                                {
+                                    int toBeRemovedKey = nearestNeighbours.OrderBy(kvp => kvp.Value).First().Key;
+                                    nearestNeighbours.Remove(toBeRemovedKey);
 
-                        int userId = Convert.ToInt32(line[0]);
-                        int item = Convert.ToInt32(line[1]);
-                        float rate = float.Parse(line[2], CultureInfo.InvariantCulture.NumberFormat);
-                        
-                        ////check if user exist
-                        if (ratings.ContainsKey(userId))
-                        {
-                            // if key already exist
-                            ratings[userId].Add(item, rate);
+                                    nearestNeighbours.Add(otherUser.Key, similarity);
+                                }
+                            }
                         }
-                        else
-                        {
-                            Dictionary<int, float> rating = new Dictionary<int, float>();
-                            rating.Add(item, rate);
-                            ratings.Add(userId, rating);
-                        }
-                        
-                        
                     }
-                }
+                    
+                    
+                    Console.WriteLine("Recommendations:");
+                    foreach (var nearNeighbour in nearestNeighbours.OrderBy(x => x.Value))
+                    {
+                        Console.WriteLine("User: " + nearNeighbour.Key);
+                    }
+
+                    break;
+
+                case SimilarityComputations.Manhattan:
+                    similairtyComputationAbility = new Manhattan();
+                    Console.WriteLine("Manhattan similarity:");
+                    Console.WriteLine(similairtyComputationAbility.CalculateSimilarity(testData.First(), testData.Last()));
+                    Console.WriteLine();
+                    break;
+
+                case SimilarityComputations.Pearson:
+                    similairtyComputationAbility = new Pearson();
+                    Console.WriteLine("Pearson similarity:");
+                    Console.WriteLine(similairtyComputationAbility.CalculateSimilarity(testData.First(), testData.Last()));
+                    Console.WriteLine();
+                    break;
+
+                case SimilarityComputations.Cosine:
+                    similairtyComputationAbility = new Cosine();
+                    Console.WriteLine("Cosine similarity");
+                    Console.WriteLine(similairtyComputationAbility.CalculateSimilarity(testData.First(), testData.Last()));
+                    break;
+                default:
+                    break;
             }
-            Euclidean euclidean = new Euclidean(ratings);
-            var euclideanDistance = euclidean.CalculateEuclideanDistance(ratings.First(), ratings.Last());
+            
 
-            Pearson pearson = new Pearson(ratings);
-            var pearsonDistance = pearson.CalculateDistance(ratings.First(), ratings.Last());
+            
 
-            Console.WriteLine("Euclidean similatiry:");
-            Console.WriteLine(euclidean.CalculateSimilarity(euclideanDistance));
-            Console.WriteLine();
-            Console.WriteLine("Pearson similarity:");
-            Console.WriteLine(pearsonDistance);
-            Console.Read();
+            
+
+            
         }
     }
 }

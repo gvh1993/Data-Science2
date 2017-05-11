@@ -42,17 +42,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cosine.cs" />
-    <Compile Include="Euclidean.cs" />
-    <Compile Include="Pearson.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="SimilairtyComputation\Cosine.cs" />
+    <Compile Include="DataProvider.cs" />
+    <Compile Include="SimilairtyComputation\Euclidean.cs" />
+    <Compile Include="SimilairtyComputation\FilteredSimilarityComputation.cs" />
+    <Compile Include="SimilairtyComputation\ISimilarityComputation.cs" />
+    <Compile Include="SimilairtyComputation\Manhattan.cs" />
+    <Compile Include="SimilairtyComputation\Pearson.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SimilarityComputation.cs" />
     <Compile Include="User-Item.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="userItem.data" />
+    <None Include="assets\userItem.data">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
