@@ -54,7 +54,7 @@ namespace Data_science_user_item
                 Int32.TryParse(Console.ReadLine(), out algorithm);
             } while (algorithm == 0 || algorithm > 4);
 
-            User_Item userItem = new User_Item(ratings, testData, userId, threshold, topNeihbours, (SimilarityComputations)algorithm);
+            UserItem userItem = new UserItem(ratings, testData, userId, threshold, topNeihbours, (SimilarityComputations)algorithm);
 
             Console.Read();
         }
