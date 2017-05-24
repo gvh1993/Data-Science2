@@ -66,21 +66,11 @@ namespace Data_science_user_item
                         // ignored
                     }
 
-                    summation[rating.Key] += rating.Value * neighbour.Similarity; //TEST
-                    // add similarity to key
-                    totalSimilarityPerItem[rating.Key] += neighbour.Similarity;
+                    summation[rating.Key] += rating.Value * neighbour.Similarity; // add rating * similarity to summation of the item
+                    
+                    totalSimilarityPerItem[rating.Key] += neighbour.Similarity; // add similarity to item
                 }
             }
-
-            // sum the similarity
-            //foreach (var neighbour in NearestNeighbours)
-            //{
-            //    foreach (var rating in neighbour.Ratings)
-            //    {
-            //        summation[rating.Key] += rating.Value * neighbour.Similarity;
-            //    }
-            //}
-
 
             //predict
             Dictionary<int, double> prediction = new Dictionary<int, double>();
