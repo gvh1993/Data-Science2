@@ -121,8 +121,12 @@ namespace Data_science_user_item
         void CalculatePredictions(List<Neighbour> nearestNeighbours)
         {
             Predicting predict = new Predicting(nearestNeighbours, _chosenUser);
-            var predictions = predict.Predict(); 
-
+            var predictions = predict.Predict();
+            Console.WriteLine("Predictions");
+            foreach (var prediction in predictions)
+            {
+                Console.WriteLine(prediction.Key + ": " + prediction.Value);
+            }
         }
     }
 }
