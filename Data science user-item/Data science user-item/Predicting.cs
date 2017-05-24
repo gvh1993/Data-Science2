@@ -47,40 +47,47 @@ namespace Data_science_user_item
         //iterate through neighbours and calculate 
         Dictionary<int, double> CalculateSum()
         {
-            //Prediction prediction = new Prediction();
-            Dictionary<int, double> summation = new Dictionary<int, double>();
-            double totalSimilarity = 0;
+            Dictionary<int, double> summation = new Dictionary<int, double>(); // <itemID, sum of (rating * similarity of neighbour)>
+            Dictionary<int, double> totalSimilarityPerItem = new Dictionary<int, double>(); // <itemID, sum of similarity of neighbours>
 
             foreach (var neighbour in NearestNeighbours)
             {
                 foreach (var rating in neighbour.Ratings)
                 {
+                    //initialize summation keys (item ID)
+                    //initialize totalSimilarityPerItem keys (Item ID)
                     try
                     {
                         summation.Add(rating.Key, 0);
+                        totalSimilarityPerItem.Add(rating.Key, 0);
                     }
                     catch (Exception ex)
                     {
                         // ignored
                     }
+
+                    summation[rating.Key] += rating.Value * neighbour.Similarity; //TEST
+                    // add similarity to key
+                    totalSimilarityPerItem[rating.Key] += neighbour.Similarity;
                 }
             }
 
-            foreach (var neighbour in NearestNeighbours)
-            {
-                totalSimilarity += neighbour.Similarity;
+            // sum the similarity
+            //foreach (var neighbour in NearestNeighbours)
+            //{
+            //    foreach (var rating in neighbour.Ratings)
+            //    {
+            //        summation[rating.Key] += rating.Value * neighbour.Similarity;
+            //    }
+            //}
 
-                foreach (var rating in neighbour.Ratings)
-                {
-                    summation[rating.Key] += rating.Value*neighbour.Similarity;
-                }
-            }
 
+            //predict
             Dictionary<int, double> prediction = new Dictionary<int, double>();
             foreach (var item in summation)
             {
-                //devide by total similarity
-                var pred = item.Value / totalSimilarity;
+                //devide by total similarity which have rated the item!!
+                var pred = item.Value / totalSimilarityPerItem[item.Key];
                 prediction.Add(item.Key, pred);
             }
 
