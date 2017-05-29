@@ -11,13 +11,13 @@ namespace Data_science_user_item
         {
             Dictionary<int, Dictionary<int, float>> ratings = new Dictionary<int, Dictionary<int, float>>();
 
-            using (FileStream fileStream = File.OpenRead(@"assets/userItem.data"))
+            using (FileStream fileStream = File.OpenRead(@"assets/u.data"))
             {
                 using (StreamReader reader = new StreamReader(fileStream))
                 {
                     while (!reader.EndOfStream)
                     {
-                        var line = reader.ReadLine().Split(',');
+                        var line = reader.ReadLine().Split('\t');
 
                         int userId = Convert.ToInt32(line[0]);
                         int item = Convert.ToInt32(line[1]);

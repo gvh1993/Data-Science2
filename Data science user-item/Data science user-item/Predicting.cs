@@ -34,7 +34,6 @@ namespace Data_science_user_item
             List<int> toBeRemovedItemIDs = (from neighbour in NearestNeighbours from chosenUserRating in ChosenUser.Value from neighbourRating in neighbour.Ratings where chosenUserRating.Key == neighbourRating.Key select neighbourRating.Key).Distinct().ToList();
 
             //remove from neighbour
-            
             foreach (var neighbour in NearestNeighbours)
             {
                 foreach (var itemId in toBeRemovedItemIDs)
@@ -80,7 +79,7 @@ namespace Data_science_user_item
                 var pred = item.Value / totalSimilarityPerItem[item.Key];
                 prediction.Add(item.Key, pred);
             }
-
+            prediction = prediction.OrderBy(x => x.Value).ToDictionary(x => x.Key, y => y.Value);
             return prediction;
         }
     }
