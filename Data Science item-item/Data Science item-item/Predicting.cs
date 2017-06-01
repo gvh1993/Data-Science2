@@ -20,21 +20,14 @@ namespace Data_Science_item_item
 
         void CalculateDeviationMatrix()
         {
-            List<Deviation> deviations = new List<Deviation>();
+            List<ItemObject> deviations = new List<ItemObject>();
 
             List<int> items = new List<int>();
             List<int> users = _userData.Keys.Distinct().ToList();
 
-            //foreach (var rating in from user in _userData from rating in user.Value where !items.Contains(rating.Key) select rating)
-            //{
-            //    deviations.Add(new Deviation() {Item = rating.Key});
-            //    items.Add(rating.Key);
-            //}
-
-
+            //init objects based on item
             foreach (var user in _userData)
             {
-                
                 foreach (var rating in user.Value)
                 {
                     if (!items.Contains(rating.Key))
@@ -42,11 +35,54 @@ namespace Data_Science_item_item
 
 
                     var deviation = deviations.Find(x => x.Item == rating.Key);
-                    deviation.Users.Add(user.Key);
+                    if (deviation == null)
+                    {
+                        ItemObject dev = new ItemObject {Item = rating.Key};
+                        dev.Users.Add(user.Key, rating.Value);
+
+                        deviations.Add(dev);
+                    }
+                    else
+                    {
+                        deviation.Users.Add(user.Key, rating.Value);
+                    }
+                    
                 }
             }
 
+            items.Sort();
+            users.Sort();
 
+            //float[,] matrix = new float[users.Count, items.Count];
+
+            for (int i = 0; i < deviations.Count; i++)
+            {
+                for (int j = 0; j < deviations.Count; j++)
+                {
+                    var dev1 = deviations[i];
+                    var dev2 = deviations[j];
+
+                    float deviationsummation = 0;
+                    float card = 0;
+
+                    //get the users who rated them both
+                    foreach (var dev1User in dev1.Users)
+                    {
+                        foreach (var dev2User in dev2.Users)
+                        {
+                            if (dev1User.Key == dev2User.Key)
+                            {
+                                deviationsummation += dev1User.Value - dev2User.Value;
+                                card++;
+                            }
+                        }
+                    }
+
+                    var deviation = (deviationsummation/card);
+                    
+                   dev1.Deviations.Add(dev2.Item, deviation);
+                }
+            }
         }
     }
 }
