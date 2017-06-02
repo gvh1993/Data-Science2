@@ -11,16 +11,19 @@ namespace Data_Science_item_item
     {
         //Format: user, [item, rating]
         private readonly Dictionary<int, Dictionary<int, float>> _userData;
+        public List<ItemObject> ItemObjects { get; set; }
 
         public Predicting(Dictionary<int, Dictionary<int, float>> userData)
         {
             _userData = userData;
             CalculateDeviationMatrix();
+            Console.WriteLine(Predict(4, 101));
+            Console.Read();
         }
 
         void CalculateDeviationMatrix()
         {
-            List<ItemObject> deviations = new List<ItemObject>();
+            ItemObjects = new List<ItemObject>();
 
             List<int> items = new List<int>();
             List<int> users = _userData.Keys.Distinct().ToList();
@@ -34,13 +37,13 @@ namespace Data_Science_item_item
                         items.Add(rating.Key);
 
 
-                    var deviation = deviations.Find(x => x.Item == rating.Key);
+                    var deviation = ItemObjects.Find(x => x.Item == rating.Key);
                     if (deviation == null)
                     {
                         ItemObject dev = new ItemObject {Item = rating.Key};
                         dev.Users.Add(user.Key, rating.Value);
 
-                        deviations.Add(dev);
+                        ItemObjects.Add(dev);
                     }
                     else
                     {
@@ -55,12 +58,12 @@ namespace Data_Science_item_item
 
             //float[,] matrix = new float[users.Count, items.Count];
 
-            for (int i = 0; i < deviations.Count; i++)
+            for (int i = 0; i < ItemObjects.Count; i++)
             {
-                for (int j = 0; j < deviations.Count; j++)
+                for (int j = 0; j < ItemObjects.Count; j++)
                 {
-                    var dev1 = deviations[i];
-                    var dev2 = deviations[j];
+                    var dev1 = ItemObjects[i];
+                    var dev2 = ItemObjects[j];
 
                     float deviationsummation = 0;
                     float card = 0;
@@ -80,9 +83,32 @@ namespace Data_Science_item_item
 
                     var deviation = (deviationsummation/card);
                     
-                   dev1.Deviations.Add(dev2.Item, deviation);
+                   //dev1.Deviations.Add(dev2.Item, deviation);
+                   dev1.DeviationObjects.Add(new DeviationObject() {OtherItemId = dev2.Item, Deviation = deviation, Card = card}); 
                 }
             }
+        }
+
+        float Predict(int user, int item)
+        {
+            
+
+            float numerator = 0;
+            float denominator = 0;
+            ItemObject itemObject = ItemObjects.Find(x => x.Item == item);
+            var userRatings = _userData[user];
+
+            foreach (var rating in userRatings)
+            {
+                var deviation = itemObject.DeviationObjects.Find(x => x.OtherItemId == rating.Key);
+                //var x = rating.Value;
+                //var  = itemObject.DeviationObjects.Find(x => x.OtherItemId == rating.Key);
+                //var minus = rating - 
+                numerator += (rating.Value - deviation.Deviation)*deviation.Card;
+                denominator += deviation.Card;
+            }
+
+            return numerator/denominator;
         }
     }
 }

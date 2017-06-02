@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="DataProvider.cs" />
     <Compile Include="ItemItem.cs" />
+    <Compile Include="Models\DeviationObject.cs" />
     <Compile Include="Models\ItemObject.cs" />
     <Compile Include="Predicting.cs" />
     <Compile Include="Program.cs" />
