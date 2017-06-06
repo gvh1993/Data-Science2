@@ -15,6 +15,7 @@ namespace Data_Science_item_item
             Dictionary<int, Dictionary<int, float>> ratings = new Dictionary<int, Dictionary<int, float>>();
 
             using (FileStream fileStream = File.OpenRead(@"assets/userItem.data"))
+            //using (FileStream fileStream = File.OpenRead(@"assets/test.txt"))
             {
                 using (StreamReader reader = new StreamReader(fileStream))
                 {

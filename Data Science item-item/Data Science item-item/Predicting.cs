@@ -17,7 +17,7 @@ namespace Data_Science_item_item
         {
             _userData = userData;
             CalculateDeviationMatrix();
-            Console.WriteLine(Predict(4, 101));
+            Console.WriteLine(Predict(7, 101));
             Console.Read();
         }
 
@@ -49,7 +49,6 @@ namespace Data_Science_item_item
                     {
                         deviation.Users.Add(user.Key, rating.Value);
                     }
-                    
                 }
             }
 
@@ -91,8 +90,6 @@ namespace Data_Science_item_item
 
         float Predict(int user, int item)
         {
-            
-
             float numerator = 0;
             float denominator = 0;
             ItemObject itemObject = ItemObjects.Find(x => x.Item == item);
@@ -104,7 +101,7 @@ namespace Data_Science_item_item
                 //var x = rating.Value;
                 //var  = itemObject.DeviationObjects.Find(x => x.OtherItemId == rating.Key);
                 //var minus = rating - 
-                numerator += (rating.Value - deviation.Deviation)*deviation.Card;
+                numerator += (rating.Value + deviation.Deviation)*deviation.Card;
                 denominator += deviation.Card;
             }
 
