@@ -14,6 +14,8 @@ namespace Data_science_user_item
         public KeyValuePair<int, Dictionary<int, float>> ChosenUser { get; set; }
         public float Summation { get; set; }
 
+        private const int AmountRated = 3;
+
         public Predicting(List<Neighbour> nearestNeighbours, KeyValuePair<int, Dictionary<int, float>> chosenUser)
         {
             NearestNeighbours = nearestNeighbours;
@@ -48,6 +50,7 @@ namespace Data_science_user_item
         {
             Dictionary<int, double> summation = new Dictionary<int, double>(); // <itemID, sum of (rating * similarity of neighbour)>
             Dictionary<int, double> totalSimilarityPerItem = new Dictionary<int, double>(); // <itemID, sum of similarity of neighbours>
+            Dictionary<int, int> amountRated = new Dictionary<int, int>(); // keeps up how many times an item is rated
 
             foreach (var neighbour in NearestNeighbours)
             {
@@ -57,8 +60,10 @@ namespace Data_science_user_item
                     //initialize totalSimilarityPerItem keys (Item ID)
                     try
                     {
+
                         summation.Add(rating.Key, 0);
                         totalSimilarityPerItem.Add(rating.Key, 0);
+                        amountRated.Add(rating.Key, 0);
                     }
                     catch (Exception ex)
                     {
@@ -68,7 +73,15 @@ namespace Data_science_user_item
                     summation[rating.Key] += rating.Value * neighbour.Similarity; // add rating * similarity to summation of the item
                     
                     totalSimilarityPerItem[rating.Key] += neighbour.Similarity; // add similarity to item
+                    amountRated[rating.Key] += 1;
                 }
+            }
+
+            //remove amount rated below X
+            foreach (var rating in amountRated.Where(rating => rating.Value < AmountRated))
+            {
+                summation.Remove(rating.Key);
+                totalSimilarityPerItem.Remove(rating.Key);
             }
 
             //predict
@@ -79,7 +92,7 @@ namespace Data_science_user_item
                 var pred = item.Value / totalSimilarityPerItem[item.Key];
                 prediction.Add(item.Key, pred);
             }
-            prediction = prediction.OrderBy(x => x.Value).ToDictionary(x => x.Key, y => y.Value);
+            prediction = prediction.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, y => y.Value);
             return prediction;
         }
     }

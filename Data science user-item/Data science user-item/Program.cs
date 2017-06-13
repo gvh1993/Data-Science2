@@ -13,6 +13,7 @@ namespace Data_science_user_item
         static void Main(string[] args)
         {
             Dictionary<int, Dictionary<int, float>> ratings = new DataProvider().InitRatings();
+            
 
             Dictionary<int, Dictionary<int, float>> testData = new DataProvider().InitTestData();
 
@@ -20,10 +21,12 @@ namespace Data_science_user_item
             //input for user
             do
             {
-                Console.WriteLine("Choose a user between " + ratings.Keys.First() + " and " + ratings.Keys.Last());
+                var first = ratings.Keys.Min();
+                var last = ratings.Keys.Max();
+                Console.WriteLine("Choose a user between " + first + " and " + last);
                 Int32.TryParse(Console.ReadLine(), out userId);
             }
-            while (userId < ratings.Keys.First() || userId > ratings.Keys.Last());
+            while (userId < ratings.Keys.Min() || userId > ratings.Keys.Max() && ratings.ContainsKey(userId));
 
 
             float threshold = 0;
@@ -37,10 +40,18 @@ namespace Data_science_user_item
             int topNeihbours = 0;
             do
             {
-                Console.WriteLine("How many tops u want to search for? " + ratings.Keys.First() + " - " + (ratings.Keys.Last() -1));
+                Console.WriteLine("How many top neighbours u want to search for? " + 1 + " - " + ratings.Count);
                 Int32.TryParse(Console.ReadLine(), out topNeihbours);
             }
-            while (topNeihbours < ratings.Keys.First() || topNeihbours >= ratings.Keys.Last());
+            while (topNeihbours < 1 || topNeihbours >= ratings.Count);
+
+            int topRecommendations = 0;
+            do
+            {
+                Console.WriteLine("How many top recommendations u want to search for? " + 1 + " - " + ratings.Count);
+                Int32.TryParse(Console.ReadLine(), out topRecommendations);
+            }
+            while (topRecommendations < 1 || topRecommendations >= ratings.Count);
 
             int algorithm = 0;
             do
@@ -54,7 +65,7 @@ namespace Data_science_user_item
                 Int32.TryParse(Console.ReadLine(), out algorithm);
             } while (algorithm == 0 || algorithm > 4);
 
-            UserItem userItem = new UserItem(ratings, testData, userId, threshold, topNeihbours, (SimilarityComputations)algorithm);
+            UserItem userItem = new UserItem(ratings, testData, userId, threshold, topNeihbours, topRecommendations, (SimilarityComputations)algorithm);
 
             Console.Read();
         }

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Data_science_user_item.Enums;
 using Data_science_user_item.Models;
@@ -19,6 +20,7 @@ namespace Data_science_user_item
 
         public int UserId { get; set; }
         public int TopNeighbours { get; set; }
+        public int TopRecommendations { get; set; }
         public double Threshold { get; set; }
         public SimilarityComputations Algorithm { get; set; }
 
@@ -26,7 +28,7 @@ namespace Data_science_user_item
 
         readonly KeyValuePair<int, Dictionary<int, float>> _chosenUser;
 
-        public UserItem(Dictionary<int, Dictionary<int, float>> ratings, Dictionary<int, Dictionary<int, float>> testData, int userId, float threshold, int topNeighbours, SimilarityComputations algorithm)
+        public UserItem(Dictionary<int, Dictionary<int, float>> ratings, Dictionary<int, Dictionary<int, float>> testData, int userId, float threshold, int topNeighbours, int topRecommendations, SimilarityComputations algorithm)
         {
             _ratings = ratings;
             _testData = testData;
@@ -34,6 +36,7 @@ namespace Data_science_user_item
             TopNeighbours = topNeighbours;
             Threshold = threshold;
             Algorithm = algorithm;
+            TopRecommendations = topRecommendations;
 
             _chosenUser = ratings.SingleOrDefault(x => x.Key == userId);
 
@@ -59,8 +62,6 @@ namespace Data_science_user_item
 
                 case SimilarityComputations.Cosine:
                     _similairtyComputationAbility = new Cosine();
-                    break;
-                default:
                     break;
             }
 
@@ -108,7 +109,7 @@ namespace Data_science_user_item
                 }
             }
 
-            Console.WriteLine("Recommendations:");
+            Console.WriteLine("Nearest neighbours:");
             foreach (var nearNeighbour in nearestNeighbours.OrderByDescending(x => x.Similarity))
             {
                 Console.WriteLine("User: " + nearNeighbour.UserId + "  with similarity: " + nearNeighbour.Similarity);
@@ -123,9 +124,12 @@ namespace Data_science_user_item
             Predicting predict = new Predicting(nearestNeighbours, _chosenUser);
             var predictions = predict.Predict();
             Console.WriteLine("Predictions");
+            var count = 0;
             foreach (var prediction in predictions)
             {
-                Console.WriteLine(prediction.Key + ": " + prediction.Value);
+                if(count < TopRecommendations)
+                Console.WriteLine("Recommendation " + (count + 1) + ": " + prediction.Key + ": " + prediction.Value);
+                count++;
             }
         }
     }

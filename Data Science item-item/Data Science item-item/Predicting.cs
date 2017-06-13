@@ -17,7 +17,7 @@ namespace Data_Science_item_item
         {
             _userData = userData;
             CalculateDeviationMatrix();
-            Console.WriteLine(Predict(7, 101));
+            Console.WriteLine(Predict(3, 105));
             Console.Read();
         }
 
