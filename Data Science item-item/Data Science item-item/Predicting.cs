@@ -13,11 +13,11 @@ namespace Data_Science_item_item
         private readonly Dictionary<int, Dictionary<int, float>> _userData;
         public List<ItemObject> ItemObjects { get; set; }
 
-        public Predicting(Dictionary<int, Dictionary<int, float>> userData)
+        public Predicting(Dictionary<int, Dictionary<int, float>> userData, int userId, int item)
         {
             _userData = userData;
             CalculateDeviationMatrix();
-            Console.WriteLine(Predict(3, 105));
+            Console.WriteLine(Predict(userId, item));
             Console.Read();
         }
 

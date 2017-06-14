@@ -11,10 +11,10 @@ namespace Data_Science_item_item
     {
         private Dictionary<int, Dictionary<int, float>> UserData { get; set; }
 
-        public ItemItem()
+        public ItemItem(Dictionary<int, Dictionary<int, float>> userData, int userId, int item)
         {
-            UserData = new DataProvider().InitRatings();
-            Predicting predict = new Predicting(UserData);
+            UserData = userData;
+            Predicting predict = new Predicting(UserData, userId, item);
             
         }
     }
