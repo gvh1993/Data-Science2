@@ -16,7 +16,7 @@ namespace Data_Science_item_item
             _userData = userData;
         }
 
-        public List<ItemObject> ComputeDeviationObjects(List<ItemObject> itemObjects )
+        public List<ItemObject> ComputeDeviationObjects(List<ItemObject> itemObjects)
         {
             foreach (ItemObject itemObject1 in itemObjects)
             {
@@ -32,7 +32,7 @@ namespace Data_Science_item_item
 
         private DeviationObject ComputeDeviation(ItemObject item1, ItemObject item2)
         {
-            DeviationObject deviationObject = new DeviationObject {OtherItemId = item2.Item};
+            DeviationObject deviationObject = new DeviationObject { OtherItemId = item2.Item };
 
             float summation = 0;
 
@@ -45,14 +45,16 @@ namespace Data_Science_item_item
                     deviationObject.Card++;
                 }
             }
-            deviationObject.Deviation = (summation/deviationObject.Card);
+
+            deviationObject.Deviation = (summation / deviationObject.Card);
+
 
             return deviationObject;
         }
 
         public List<ItemObject> ConvertUserdataToItemObjects()
         {
-           var itemObjects = new List<ItemObject>();
+            var itemObjects = new List<ItemObject>();
 
             //init objects based on item
             foreach (var user in _userData)

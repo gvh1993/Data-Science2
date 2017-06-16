@@ -96,6 +96,11 @@ namespace Data_Science_item_item
             foreach (var rating in _userData)
             {
                 var deviation = ItemObject.DeviationObjects.Find(x => x.OtherItemId == rating.Key);
+                if (Single.IsNaN(deviation.Deviation))
+                {
+                    //NaN happends with deviation calulation if there are no similar raters! so we skip these in the prediction calculation
+                    continue;
+                }
 
                 numerator += (rating.Value + deviation.Deviation)*deviation.Card;
                 denominator += deviation.Card;
