@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataParser.cs" />
     <Compile Include="DataProvider.cs" />
     <Compile Include="ItemItem.cs" />
     <Compile Include="Models\DeviationObject.cs" />
@@ -53,6 +54,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Assets\u.data">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Assets\userItem.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
