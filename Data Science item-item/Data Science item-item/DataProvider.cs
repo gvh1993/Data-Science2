@@ -5,23 +5,32 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Data_Science_item_item.Models;
 
 namespace Data_Science_item_item
 {
     class DataProvider
     {
+        private const string Normaldata = @"assets/userItem.data";
+        private const char NormalDelimeter = ',';
+
+        private const string Bigdata = @"assets/u.data";
+        private const char BigdataDelimeter = '\t';
+
+
+
         public Dictionary<int, Dictionary<int, float>> InitRatings()
         {
             Dictionary<int, Dictionary<int, float>> ratings = new Dictionary<int, Dictionary<int, float>>();
 
-            using (FileStream fileStream = File.OpenRead(@"assets/userItem.data"))
+            using (FileStream fileStream = File.OpenRead(Bigdata))
             //using (FileStream fileStream = File.OpenRead(@"assets/test.txt"))
             {
                 using (StreamReader reader = new StreamReader(fileStream))
                 {
                     while (!reader.EndOfStream)
                     {
-                        var line = reader.ReadLine().Split(',');
+                        var line = reader.ReadLine().Split(BigdataDelimeter);
 
                         int userId = Convert.ToInt32(line[0]);
                         int item = Convert.ToInt32(line[1]);
@@ -39,8 +48,6 @@ namespace Data_Science_item_item
                             rating.Add(item, rate);
                             ratings.Add(userId, rating);
                         }
-
-
                     }
                 }
             }
