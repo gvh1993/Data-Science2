@@ -11,7 +11,7 @@ namespace Data_Science_item_item
     {
         private Dictionary<int, Dictionary<int, float>> UserData { get; set; }
 
-        public ItemItem(Dictionary<int, Dictionary<int, float>> userData, int userId, int item)
+        public ItemItem(Dictionary<int, Dictionary<int, float>> userData, int userId, int topRecommendations)
         {
             UserData = userData;
 
@@ -21,14 +21,27 @@ namespace Data_Science_item_item
             var itemObjectsWithDeviation = parser.ComputeDeviationObjects(itemObjects);
 
             //predict 
-            ItemObject chosenItem = itemObjectsWithDeviation.Find(x => x.Item == item);
             var chosenUserData = UserData[userId];
+            Predicting predict = new Predicting(chosenUserData);
 
-            Predicting predict = new Predicting(chosenItem, chosenUserData);
-            Console.WriteLine("Predicting:");
+            Dictionary<int, float> predictions = new Dictionary<int, float>(); //key = itemId, Value = predictionValue
+            //iterate through itemObjectsWithDeviation and perform a prediction
+            foreach (var itemObject in itemObjectsWithDeviation)
+            {
+                float prediction = predict.Predict(itemObject);
+                predictions.Add(itemObject.Item, prediction);
+            }
+
+            //sort predictions
+            var sortedPredictions = predictions.OrderByDescending(x => x.Value).Take(topRecommendations);
+
+            
+            Console.WriteLine("top " + topRecommendations + " predictions:");
             Console.WriteLine("User: " + userId);
-            Console.WriteLine("Item: " + item);
-            Console.WriteLine(predict.Predict());
+            foreach (var prediction in sortedPredictions)
+            {
+                Console.WriteLine(prediction.Key + ": " + prediction.Value);
+            }
             Console.Read();
         }
     }

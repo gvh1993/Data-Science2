@@ -15,29 +15,28 @@ namespace Data_Science_item_item
             //welke item
 
             int userId = 0;
+            bool succeededParseUserId;
             //input for user
             do
             {
                 var first = ratings.Keys.Min();
                 var last = ratings.Keys.Max();
                 Console.WriteLine("Choose a user between " + first + " and " + last);
-                Int32.TryParse(Console.ReadLine(), out userId);
+                succeededParseUserId = Int32.TryParse(Console.ReadLine(), out userId);
             }
-            while (userId < ratings.Keys.Min() || userId > ratings.Keys.Max() && ratings.ContainsKey(userId));
+            while (userId < ratings.Keys.Min() || userId > ratings.Keys.Max() && !ratings.ContainsKey(userId) && succeededParseUserId);
 
-            int item = 0;
+
+            int topRecommendations;
+            bool succeededParseRecommendation;
             do
             {
-
-                Console.WriteLine("Choose an item to predict");
-                Int32.TryParse(Console.ReadLine(), out item);
-                var user = ratings[userId];
-                
+                Console.WriteLine("How many recommendations do you want?");
+                succeededParseRecommendation = Int32.TryParse(Console.ReadLine(), out topRecommendations);
             }
-            while (ratings[userId].ContainsKey(item));
+            while (!succeededParseRecommendation);
 
-
-            ItemItem itemItem = new ItemItem(ratings, userId, item);
+            ItemItem itemItem = new ItemItem(ratings, userId, topRecommendations);
         }
     }
 }
