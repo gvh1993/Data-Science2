@@ -41,6 +41,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.lbl_amountOfItemsInCluster = new System.Windows.Forms.Label();
             this.listView3 = new System.Windows.Forms.ListView();
+            this.txt_amountOfRuns = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // lbl_amountOfClusters
@@ -57,9 +59,9 @@
             this.lbl_amountOfIterations.AutoSize = true;
             this.lbl_amountOfIterations.Location = new System.Drawing.Point(56, 222);
             this.lbl_amountOfIterations.Name = "lbl_amountOfIterations";
-            this.lbl_amountOfIterations.Size = new System.Drawing.Size(203, 25);
+            this.lbl_amountOfIterations.Size = new System.Drawing.Size(277, 25);
             this.lbl_amountOfIterations.TabIndex = 1;
-            this.lbl_amountOfIterations.Text = "Amount of Iterations";
+            this.lbl_amountOfIterations.Text = "Amount of Iterations per run";
             // 
             // txt_amountOfClusters
             // 
@@ -79,7 +81,7 @@
             // 
             // btn_Start
             // 
-            this.btn_Start.Location = new System.Drawing.Point(61, 353);
+            this.btn_Start.Location = new System.Drawing.Point(52, 456);
             this.btn_Start.Name = "btn_Start";
             this.btn_Start.Size = new System.Drawing.Size(216, 62);
             this.btn_Start.TabIndex = 4;
@@ -161,12 +163,32 @@
             this.listView3.UseCompatibleStateImageBehavior = false;
             this.listView3.View = System.Windows.Forms.View.List;
             // 
+            // txt_amountOfRuns
+            // 
+            this.txt_amountOfRuns.Location = new System.Drawing.Point(61, 384);
+            this.txt_amountOfRuns.Name = "txt_amountOfRuns";
+            this.txt_amountOfRuns.Size = new System.Drawing.Size(100, 31);
+            this.txt_amountOfRuns.TabIndex = 14;
+            this.txt_amountOfRuns.Text = "100";
+            this.txt_amountOfRuns.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(56, 343);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(157, 25);
+            this.label3.TabIndex = 13;
+            this.label3.Text = "Amount of runs";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(2372, 1400);
+            this.Controls.Add(this.txt_amountOfRuns);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.listView3);
             this.Controls.Add(this.lbl_amountOfItemsInCluster);
             this.Controls.Add(this.label2);
@@ -202,6 +224,8 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label lbl_amountOfItemsInCluster;
         private System.Windows.Forms.ListView listView3;
+        private System.Windows.Forms.TextBox txt_amountOfRuns;
+        private System.Windows.Forms.Label label3;
     }
 }
 

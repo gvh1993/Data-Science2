@@ -1,33 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace K_Meansv2
 {
     public partial class Form1 : Form
-    { 
-        private int[][] wineMatrix;
-        private double[][] centroids;
-        private int rows;
-        private int columns;
-        private List<Cluster> clusters;
+    {
         Random r;
+        private double[][] centroids;
+        DataProvider dataProvider;
+        ErrorCalculator errorCalculator;
 
-        int amountOfClusters, amountOfIterations;
+        private List<Cluster> clusters;
+        
+        private List<List<Cluster>> history;
+        private List<Cluster> bestClusters;
+
+        int amountOfClusters, amountOfIterations, amountOfRuns;
         
 
         public Form1()
         {
+
+            history = new List<List<Cluster>>();
             r = new Random();
-            rows = 0;
-            columns = 0;
+
+            dataProvider = new DataProvider();
+            errorCalculator = new ErrorCalculator(dataProvider);
+            //wineMatrix = dataProvider.WineMatrix;
+            //rows = 0;
+            //columns = 0;
 
             InitializeComponent();
         }
@@ -38,18 +42,19 @@ namespace K_Meansv2
             {
                 //start algorithm
                 Reset();
-                InitiateVectors();
-                InitCentroids();
-                KMeans(amountOfIterations);
+                //InitiateVectors();
+                //InitCentroids();
+                KMeans();
                 PrintOutput();
             }
         }
 
         private void Reset()
         {
-            rows = 0;
-            columns = 0;
+            //rows = 0;
+            //columns = 0;
             lbl_bestSSE.Text = "Best SSE:";
+            history.Clear();
         }
 
         private bool ValidateFields()
@@ -65,40 +70,45 @@ namespace K_Meansv2
                 lbl_error.Text += "Amount of Iterations";
                 return false;
             }
+            if (!Int32.TryParse(txt_amountOfRuns.Text, out amountOfRuns))
+            {
+                lbl_error.Text += "Amount of Runs";
+                return false;
+            }
             return true;
         }
 
-        private void InitiateVectors()
-        {
-            List<int[]> lines;
+        //private void InitiateVectors()
+        //{
+        //    List<int[]> lines;
 
-            using (var fileStream = File.OpenRead("WineData.csv"))
-            {
-                using (StreamReader reader = new StreamReader(fileStream, Encoding.Default))
-                {
-                    lines = new List<int[]>();
-                    while (!reader.EndOfStream)
-                    {
-                        int[] line = reader.ReadLine().Split(',').Select(x => Convert.ToInt32(x)).ToArray();
-                        lines.Add(line);
-                    }
-                }
-            }
+        //    using (var fileStream = File.OpenRead("WineData.csv"))
+        //    {
+        //        using (StreamReader reader = new StreamReader(fileStream, Encoding.Default))
+        //        {
+        //            lines = new List<int[]>();
+        //            while (!reader.EndOfStream)
+        //            {
+        //                int[] line = reader.ReadLine().Split(',').Select(x => Convert.ToInt32(x)).ToArray();
+        //                lines.Add(line);
+        //            }
+        //        }
+        //    }
 
-            //set rows and columns count
-            rows = lines.Count;
-            foreach (var vector in lines)
-            {
-                foreach (var point in vector)
-                {
-                    columns++;
-                }
-                break;
-            }
+        //    //set rows and columns count
+        //    rows = lines.Count;
+        //    foreach (var vector in lines)
+        //    {
+        //        foreach (var point in vector)
+        //        {
+        //            columns++;
+        //        }
+        //        break;
+        //    }
 
-            wineMatrix = new int[rows][];
-            wineMatrix = lines.ToArray();
-        }
+        //    wineMatrix = new int[rows][];
+        //    wineMatrix = lines.ToArray();
+        //}
 
         private void InitCentroids()
         {
@@ -109,10 +119,10 @@ namespace K_Meansv2
             
             for (int i = 0; i < amountOfClusters; i++)
             {
-                centroids[i] = new double[columns];
+                centroids[i] = new double[dataProvider.Columns];
                 Cluster cluster = new Cluster();
 
-                for (int j = 0; j < columns; j++)
+                for (int j = 0; j < dataProvider.Columns; j++)
                 {
                     //only 0 or 1
                     centroids[i][j] = r.Next(0, 2);
@@ -122,81 +132,74 @@ namespace K_Meansv2
             }
         }
 
-        //TODO CALCULATE HOW MANY CENTROIDS
-        private double CalculateDistance(int[] vector, double[] centroid)
-        {
-            double distance = 0;
+        //private double CalculateDistance(int[] vector, double[] centroid)
+        //{
+        //    double distance = 0;
 
-            // double[] powerValues = {};
-            //calculate pow and add to distance
-            for (int i = 0; i < columns; i++)
-            {
-                //powerValues[i] = Math.Pow(vector[i] - centroid[i], 2);
-                distance += Math.Pow(vector[i] - centroid[i], 2);
-            }
+        //    // double[] powerValues = {};
+        //    //calculate pow and add to distance
+        //    for (int i = 0; i < dataProvider.Columns; i++)
+        //    {
+        //        //powerValues[i] = Math.Pow(vector[i] - centroid[i], 2);
+        //        distance += Math.Pow(vector[i] - centroid[i], 2);
+        //    }
 
-            //calculate sqrt
-            //for (int i = 0; i < columns; i++)
-            //{
-            //    distance += powerValues[i];
-            //}
+        //    return Math.Sqrt(distance);
+        //}
 
-            return Math.Sqrt(distance);
-        }
+        //private void FindClosestCentroid()
+        //{
+        //    ClearClusterWineData();
+        //    //iterate over winematrix vectors to calculate distance and assign to cluster/centroid
+        //    foreach (int[] wineVector in dataProvider.WineMatrix)
+        //    {
+        //        double[] closestCentroid = { };
+        //        double minDistanceToCentroid = Double.MaxValue;
 
-        private void FindClosestCentroid()
-        {
-            ClearClusterWineData();
-            //iterate over winematrix vectors to calculate distance and assign to cluster/centroid
-            foreach (int[] wineVector in wineMatrix)
-            {
-                double[] closestCentroid = { };
-                double minDistanceToCentroid = Double.MaxValue;
+        //        foreach (double[] centroid in centroids)
+        //        {
+        //            double distance = CalculateDistance(wineVector, centroid);
 
-                foreach (double[] centroid in centroids)
-                {
-                    double distance = CalculateDistance(wineVector, centroid);
+        //            if (distance < minDistanceToCentroid)
+        //            {
+        //                closestCentroid = centroid;
+        //                minDistanceToCentroid = distance;
+        //            }
+        //        }
 
-                    if (distance < minDistanceToCentroid)
-                    {
-                        closestCentroid = centroid;
-                        minDistanceToCentroid = distance;
-                    }
-                }
+        //        //add vector to closest cluster
+        //        Cluster theChosenCluster = clusters.Find(x => x.Centroid == closestCentroid);
+        //        theChosenCluster.WineData.Add(wineVector);
+        //    }
+        //}
 
-                //add vector to closest cluster
-                Cluster theChosenCluster = clusters.Find(x => x.Centroid == closestCentroid);
-                theChosenCluster.WineData.Add(wineVector);
-            }
-        }
+        //private void ComputeCentroids()
+        //{
+        //    foreach (Cluster cluster in clusters)
+        //    {
+        //        //check if wineData exists
+        //        if (cluster.WineData.Count == 0)
+        //        {
+        //            continue;
+        //        }
 
-        private void ComputeCentroids()
-        {
-            foreach (Cluster cluster in clusters)
-            {
-                //check if wineData exists
-                if (cluster.WineData.Count == 0)
-                {
-                    continue;
-                }
+        //        //plus 
+        //        int[] meanCalculation = new int[dataProvider.Columns];
 
-                //plus 
-                int[] meanCalculation = new int[columns];
+        //        foreach (int[] wineVector in cluster.WineData)
+        //        {
+        //            meanCalculation = meanCalculation.Select((x, index) => x + wineVector[index]).ToArray();
 
-                foreach (int[] wineVector in cluster.WineData)
-                {
-                    meanCalculation = meanCalculation.Select((x, index) => x + wineVector[index]).ToArray();
+        //        }
+        //        for (int i = 0; i < meanCalculation.Length; i++)
+        //        {
+        //            var meanCalcNumber = meanCalculation[i];
+        //            double calcNumber = Convert.ToDouble(meanCalcNumber);
 
-                }
-                for (int i = 0; i < meanCalculation.Length; i++)
-                {
-                    var meanCalcNumber = meanCalculation[i];
-                    double calcNumber = Convert.ToDouble(meanCalcNumber);
-
-                    cluster.Centroid[i] = calcNumber / cluster.WineData.Count;
-                }
-            }
-        }
+        //            cluster.Centroid[i] = calcNumber / cluster.WineData.Count;
+        //        }
+        //    }
+        //}
 
         private void ClearClusterWineData()
         {
@@ -226,46 +229,66 @@ namespace K_Meansv2
             Console.Read();
         }
 
-        private double SSE(List<Cluster> clusters)
-        {
-            // voor elke cluster moet je de distance van de vector naar de centroid
-            double distance = 0;
+        //private double SSE(List<Cluster> clusters)
+        //{
+        //    // voor elke cluster moet je de distance van de vector naar de centroid
+        //    double distance = 0;
 
-            foreach (var cluster in clusters)
-            {
-                //per centroid/cluster de distance berekenen van de vectors
-                foreach (var wineData in cluster.WineData)
-                {
-                    distance += CalculateDistance(wineData, cluster.Centroid);
-                }
-            }
-            return distance;
-        }
+        //    foreach (var cluster in clusters)
+        //    {
+        //        //per centroid/cluster de distance berekenen van de vectors
+        //        foreach (var wineData in cluster.WineData)
+        //        {
+        //            distance += CalculateDistance(wineData, cluster.Centroid);
+        //        }
+        //    }
+        //    return distance;
+        //}
 
         private void Silhouette()
         {
             //TODO implement silhouette
         }
 
-        private void KMeans(int iterations)
+        private void KMeans()
         {
-            for (int i = 0; i <= iterations; i++)
+            KMeans kmeans = new KMeans(dataProvider, errorCalculator);
+            for (int i = 0; i < amountOfRuns; i++)
             {
-                FindClosestCentroid();
-                ComputeCentroids();
+                InitCentroids();
 
-                //if (i != iterations)
-                //{
-                //    //empty the winedata in the 
-                //    ClearClusterWineData();
-                //}
-                //else
-                //{
-                //    PrintClusters();
-                //}
-
+                for (int j = 0; j <= amountOfIterations; j++)
+                {
+                    ClearClusterWineData();
+                    var updatedClusters = kmeans.FindClosestCentroid(clusters, centroids);
+                    clusters = kmeans.ComputeCentroids(updatedClusters);
+                }
+                // TODO add clusters to history
+                List<Cluster> savedCluster = new List<Cluster>(clusters);
+                history.Add(savedCluster);
                 
+                clusters.Clear();
+
             }
+            // TODO get best from history and set to chosenCluster
+            GetBestClusters();
+        }
+
+        private void GetBestClusters()
+        {
+            List<Cluster> bestClusters = new List<Cluster>();
+            double fittest = Double.MaxValue;
+            foreach (var clusters in history)
+            {
+                var SSE = errorCalculator.SSE(clusters);
+                if (SSE < fittest)
+                {
+                    bestClusters = clusters;
+                    fittest = SSE;
+                }
+            }
+            Console.WriteLine(fittest);
+            this.bestClusters = bestClusters;
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
@@ -280,7 +303,7 @@ namespace K_Meansv2
             listView3.Items.Clear();
             //get cluster from cluster list by getting the number
             string[] listViewItem = listView1.SelectedItems[0].Text.Split(' ');
-            Cluster chosenCluster = clusters[Convert.ToInt32(listViewItem[1]) - 1];
+            Cluster chosenCluster = bestClusters[Convert.ToInt32(listViewItem[1]) - 1];
 
             Console.WriteLine(listView1.SelectedItems[0].Text);
             lbl_amountOfItemsInCluster.Text = "Amount of items in cluster: " + chosenCluster.WineData.Count;
@@ -289,7 +312,7 @@ namespace K_Meansv2
             for (int i = 0; i < chosenCluster.WineData.Count; i++)
             {
                 string client = "client #" + i + " buys offer: " ;
-                for (int j = 0; j < columns; j++)
+                for (int j = 0; j < dataProvider.Columns; j++)
                 {
                     if (chosenCluster.WineData[i][j] == 1)
                     {
@@ -311,23 +334,16 @@ namespace K_Meansv2
                 item.Text = $"Offer {(i + 1)} --> bought {amountBought[i]} times";
                 listView3.Items.Add(item);
             }
-            
+        }
 
-            //foreach (var wineDataItem in chosenCluster.WineData)
-            //{
-            //    ListViewItem item = new ListViewItem()
-            //    {
-            //        Text = string.Join("", wineDataItem)
-            //    };
-            //    listView2.Items.Add(item);
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
 
-            //}
-            
         }
 
         private void PrintOutput()
         {
-            lbl_bestSSE.Text += SSE(clusters);
+            lbl_bestSSE.Text += errorCalculator.SSE(bestClusters);
             listView1.Clear();
             listView2.Clear();
             listView3.Clear();
