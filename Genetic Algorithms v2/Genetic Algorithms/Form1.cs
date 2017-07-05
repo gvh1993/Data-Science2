@@ -71,7 +71,8 @@ namespace Genetic_Algorithms
                 for (int j = elitismCount; j < currentPopulation.Count; j += 2)
                 {
                     double crossoverDecider = r.NextDouble();
-                    Tuple<Binary, Binary> parents = SelectParentsTournament();
+                    //Tuple<Binary, Binary> parents = SelectParentsTournament();
+                    Tuple<Binary, Binary> parents = RankSelection();
                     if (crossoverDecider <= crossoverRate)
                     {
                         Tuple<Binary, Binary> children = Crossover(parents);
@@ -132,6 +133,55 @@ namespace Genetic_Algorithms
             {
                 newPopulation.Add(eliteIndividual);
             }
+        }
+
+        Tuple<Binary, Binary> RankSelection()
+        {
+            Binary mother = new Binary();
+            Binary father = new Binary();
+            //order fitness
+            var sortedPopulation = currentPopulation.OrderBy(x => x.Fitness).ToList();
+
+            int sum = 0;
+            for (int i = 1; i <= currentPopulation.Count; i++)
+            {
+                sum += i;
+            }
+
+
+            //MOTHER
+            double motherRand = r.Next(1, sum + 1);
+            double motherChance = motherRand/sum;
+            double motherSum = 0;
+
+            for (int i = 1; i <= sortedPopulation.Count; i++)
+            {
+                motherSum += ((double)i /(double)sortedPopulation.Count);
+
+                if (motherChance < motherSum)
+                {
+                    mother = sortedPopulation[i-1];
+                    break;
+                }
+            }
+
+            //FATHER
+            double fatherRand = r.Next(1, sum + 1);
+            double fatherChance = fatherRand / sum;
+            double fatherSum = 0;
+
+            for (int i = 1; i <= sortedPopulation.Count; i++)
+            {
+                fatherSum += (i / sortedPopulation.Count);
+
+                if (fatherChance < fatherSum)
+                {
+                    father = sortedPopulation[i - 1];
+                    break;
+                }
+            }
+
+            return new Tuple<Binary, Binary>(mother, father);
         }
 
         Tuple<Binary, Binary> SelectParentsTournament()
