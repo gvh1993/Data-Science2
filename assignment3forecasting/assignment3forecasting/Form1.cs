@@ -24,17 +24,17 @@ namespace assignment3forecasting
             InitData();
             
 
-            for (int i = 1; i < 11; i++)
+            for (int i = 1; i <= 100; i++)//iterate from 0.01 to 1
             {
-                float alphaValue = i / 10f;
+                float alphaValue = i / 100f;
 
                 SES ses = new SES(alphaValue);
                 SESHistory.Add(ses);
 
 
-                for (int j = 0; j < 11; j++)
+                for (int j = 0; j < 100; j++)
                 {
-                    float betaValue = j / 10f;
+                    float betaValue = j / 100f;
 
                     DES des = new DES(alphaValue, betaValue);
                     DESHistory.Add(des);
@@ -61,7 +61,7 @@ namespace assignment3forecasting
         private void InitData()
         {
             Time = new List<int>();
-            for (int i = 1; i < 49; i++)
+            for (int i = 0; i < 48; i++)
             {
                 Time.Add(i);
             }
@@ -93,7 +93,7 @@ namespace assignment3forecasting
         {
             for (int i = 0; i < des.SmoothenedData.Count; i++)
             {
-                chart1.Series["DES"].Points.AddXY(i+2, des.SmoothenedData[i]);
+                chart1.Series["DES"].Points.AddXY(i + 1, des.SmoothenedData[i]);
             }
         }
     }

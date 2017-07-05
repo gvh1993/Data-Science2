@@ -8,14 +8,14 @@ namespace assignment3forecasting
 {
     public class DES : Forecast
     {
-        public float beta = 0.1f;
+        public float beta = 0.01f;
 
         public DES(float alpha, float beta)
         {
             this.alpha = alpha;
             this.beta = beta;
 
-            SmoothenedData = new List<int>();
+            SmoothenedData = new List<double>();
             InitData();
             ComputeDES();
         }
@@ -24,9 +24,9 @@ namespace assignment3forecasting
         {
             //𝒔𝒕 = 𝜶𝒙𝒕 + 𝟏 − 𝜶 𝒔𝒕−𝟏 + 𝒃𝒕−𝟏
             //𝒃𝒕 = 𝜷 𝒔𝒕 − 𝒔𝒕−𝟏 + 𝟏 − 𝜷 𝒃𝒕−𝟏
-            //𝒇𝒕+𝟏 = 𝒔𝒕 + 𝒃𝒕
-            List<int> s = new List<int>();
-            List<int> b = new List<int>();
+            
+            List<double> s = new List<double>();
+            List<double> b = new List<double>();
 
             s.Add(Demand[1]);
             b.Add(Demand[1] - Demand[0]);
@@ -35,13 +35,14 @@ namespace assignment3forecasting
 
             for (int i = 2; i < Demand.Count; i++)
             {
-                s.Add(Convert.ToInt32(alpha * Demand[i] + (1 - alpha) * (s[i - 2] + b[i - 2])));
-                b.Add(Convert.ToInt32(beta * (s[i - 1] - s[i - 2]) + (1 - beta) * b[i - 2]));
+                s.Add(alpha * Demand[i] + (1 - alpha) * (s[i - 2] + b[i - 2]));
+                b.Add(beta * (s[i - 1] - s[i - 2]) + (1 - beta) * b[i - 2]);
 
                 SmoothenedData.Add(s[i - 2] + b[i - 2]);
             }
 
             //forecast
+            //𝒇𝒕+𝟏 = 𝒔𝒕 + 𝒃𝒕
             for (int i = Demand.Count; i < Time.Count; i++)
             {
                 SmoothenedData.Add(s.Last() + (i - Demand.Count) * b.Last());
@@ -49,7 +50,21 @@ namespace assignment3forecasting
 
             CalculateError();
         }
+        protected override void CalculateError()
+        {
+            double error = 0;
 
+            for (int i = 2; i < Demand.Count; i++)
+            {
+                error += Math.Pow(Demand[i] - SmoothenedData[i-2], 2);
+
+            }
+            error = error / (Demand.Count - 1);
+
+            error = Math.Sqrt(error);
+
+            this.error = error;
+        }
         //private void CalculateError()
         //{
         //    double error = 0;

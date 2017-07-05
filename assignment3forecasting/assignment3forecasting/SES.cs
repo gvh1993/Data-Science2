@@ -11,7 +11,7 @@ namespace assignment3forecasting
         public SES(float alpha)
         {
             this.alpha = alpha;
-            SmoothenedData = new List<int>();
+            SmoothenedData = new List<double>();
 
             InitData();
             ComputeSES();
@@ -32,13 +32,13 @@ namespace assignment3forecasting
 
             SmoothenedData.Add(Demand[0]);
 
-            for (int i = 1; i < Demand.Count; i++)
+            for (int i = 0; i < Demand.Count; i++)
             {
-                SmoothenedData.Add(Convert.ToInt32(alpha * Demand[i - 1] + (1 - alpha) * SmoothenedData[i - 1]));
+                SmoothenedData.Add(alpha * Demand[i] + (1 - alpha) * SmoothenedData[i]);
             }
 
             //forecast
-            for (int i = Demand.Count; i < Time.Count; i++)
+            for (int i = Demand.Count; i < Time.Count-1; i++)
             {
                 SmoothenedData.Add(SmoothenedData.Last());
             }

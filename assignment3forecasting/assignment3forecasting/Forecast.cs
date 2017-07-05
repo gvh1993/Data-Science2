@@ -12,9 +12,9 @@ namespace assignment3forecasting
         protected List<int> Time { get; set; }
         public List<int> Demand { get; set; }
 
-        public List<int> SmoothenedData { get; set; }
+        public List<double> SmoothenedData { get; set; }
 
-        public float alpha = 0.1f;
+        public float alpha = 0.01f;
 
         public double error = double.MaxValue;
 
@@ -22,14 +22,14 @@ namespace assignment3forecasting
         protected void InitData()
         {
             Time = new List<int>();
-            for (int i = 1; i < 49; i++)
+            for (int i = 0; i < 48; i++)
             {
                 Time.Add(i);
             }
             Demand = new List<int> { 165, 171, 147, 143, 164, 160, 152, 150, 159, 169, 173, 203, 169, 166, 162, 147, 188, 161, 162, 169, 185, 188, 200, 229, 189, 218, 185, 199, 210, 193, 211, 208, 216, 218, 264, 304 };
         }
 
-        protected void CalculateError()
+        protected virtual void CalculateError()
         {
             double error = 0;
 
