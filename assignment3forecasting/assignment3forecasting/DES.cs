@@ -8,7 +8,7 @@ namespace assignment3forecasting
 {
     public class DES : Forecast
     {
-        public float beta = 0.01f;
+        public float beta = 0.00f;
 
         public DES(float alpha, float beta)
         {
@@ -31,14 +31,14 @@ namespace assignment3forecasting
             s.Add(Demand[1]);
             b.Add(Demand[1] - Demand[0]);
 
-            SmoothenedData.Add(s[0] + b[0]);
+            SmoothenedData.Add(s[0] + b[0]); // t=3 == index 2
 
-            for (int i = 2; i < Demand.Count; i++)
+            for (int i = 3; i < Demand.Count; i++)//begin with (index 3 == t4) compared to (index 0 of DESlist == t3)
             {
-                s.Add(alpha * Demand[i] + (1 - alpha) * (s[i - 2] + b[i - 2]));
-                b.Add(beta * (s[i - 1] - s[i - 2]) + (1 - beta) * b[i - 2]);
+                s.Add(alpha * Demand[i] + (1 - alpha) * (s[i - 3] + b[i - 3]));
+                b.Add(beta * (s[i - 2] - s[i - 3]) + (1 - beta) * b[i - 3]);
 
-                SmoothenedData.Add(s[i - 2] + b[i - 2]);
+                SmoothenedData.Add(s[i - 3] + b[i - 3]); //
             }
 
             //forecast
@@ -54,9 +54,9 @@ namespace assignment3forecasting
         {
             double error = 0;
 
-            for (int i = 2; i < Demand.Count; i++)
+            for (int i = 2; i < Demand.Count; i++)//compare index 0 with 2
             {
-                error += Math.Pow(Demand[i] - SmoothenedData[i-2], 2);
+                error += Math.Pow(Demand[i] - SmoothenedData[i - 2], 2);
 
             }
             error = error / (Demand.Count - 1);

@@ -14,7 +14,7 @@ namespace assignment3forecasting
 
         public List<double> SmoothenedData { get; set; }
 
-        public float alpha = 0.01f;
+        public float alpha = 0.00f;
 
         public double error = double.MaxValue;
 

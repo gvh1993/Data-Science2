@@ -24,7 +24,7 @@ namespace assignment3forecasting
             InitData();
             
 
-            for (int i = 1; i <= 100; i++)//iterate from 0.01 to 1
+            for (int i = 0; i <= 100; i++)//iterate from 0.01 to 1
             {
                 float alphaValue = i / 100f;
 
@@ -46,6 +46,7 @@ namespace assignment3forecasting
             double desMin = DESHistory.Min(x => x.error);
             des = DESHistory.Find(x => x.error == desMin);
 
+            var testDes = DESHistory.Find(x => x.alpha == 0.73f && x.beta == 0);
             PlotData();
             PlotSESData();
             PlotDESData();
@@ -93,7 +94,7 @@ namespace assignment3forecasting
         {
             for (int i = 0; i < des.SmoothenedData.Count; i++)
             {
-                chart1.Series["DES"].Points.AddXY(i + 1, des.SmoothenedData[i]);
+                chart1.Series["DES"].Points.AddXY(i + 2, des.SmoothenedData[i]);
             }
         }
     }
